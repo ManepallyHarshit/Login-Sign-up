@@ -89,7 +89,4 @@ Upon running, the app automatically manages local flat-file storage:
 ## 💻 Requirements
 
 * **Compiler:** Any C++17 compatible compiler (`g++`, `clang++`, `MSVC`)
-* **Dependencies:** Zero external libraries required.
-
----# Login-Sign-up
-# Login-Sign-up
+* **Dependencies:** Zero external libraries required.# Login-Sign-up
