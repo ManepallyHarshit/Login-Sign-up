@@ -1,6 +1,6 @@
 # 🔐 Password Auth System + Rock-Paper-Scissors Game
 
-A secure, modular C++ console application combining user authentication, password strength validation, and an interactive Rock-Paper-Scissors game with persistent score tracking. 
+A secure, modular C++ console application combining user authentication, password strength validation, and an interactive Rock-Paper-Scissors game with persistent score tracking.
 
 ---
 
@@ -18,12 +18,12 @@ A secure, modular C++ console application combining user authentication, passwor
 ### 1. Build
 Compile the project using any C++17 compliant compiler:
 ```bash
-g++ -std=c++17 main.cpp auth.cpp game.cpp utils.cpp -o main
+g++ -std=c++17 -Wall -Wextra main.cpp auth.cpp game.cpp utils.cpp -o game
 ```
 
 ### 2. Run
 ```bash
-./main
+./game
 ```
 
 ---
@@ -68,7 +68,7 @@ The application analyzes passwords based on character variety (lowercase, upperc
 
 ### Generated Data Files
 Upon running, the app automatically manages local flat-file storage:
-* `userdata.txt` — Stores account information (usernames & hashed/plain credentials).
+* `userdata.txt` — Stores account information (usernames & credentials).
 * `<username>-score.txt` — Stores individual player game statistics (wins/losses/draws).
 
 ---
@@ -79,9 +79,11 @@ Upon running, the app automatically manages local flat-file storage:
 * **Include Guards** — Protected across all header files using `#ifndef`/`#define`/`#endif`.
 * **Namespaces** — Encapsulated utility logic inside the `Utils` namespace.
 * **Modern Randomness** — Uses `<random>` (`std::mt19937` and `std::uniform_int_distribution`) instead of legacy `rand()`.
-* **Resource Safety (RAII)** — Leverages `std::string`, `std::fstream`, and `std::vector` for safe memory management.
+* **Resource Safety (RAII)** — Leverages `std::string`, `std::fstream` for safe memory management; no manual `close()` calls needed.
 * **Const-Correctness** — Utilizes `const` methods and references for code safety.
 * **Clean Dependencies** — Uses forward declarations (e.g., `struct Score;` in `game.h`) to minimize coupling.
+* **Proper RNG Initialization** — Random engine initialized once in `GameManager` constructor, not per-loop.
+* **Bias-Free Password Generation** — Uses dedicated `uniform_int_distribution` for each character set to avoid modulo bias.
 * **C++17 Standards** — Built with modern C++ features.
 
 ---
@@ -89,4 +91,13 @@ Upon running, the app automatically manages local flat-file storage:
 ## 💻 Requirements
 
 * **Compiler:** Any C++17 compatible compiler (`g++`, `clang++`, `MSVC`)
-* **Dependencies:** Zero external libraries required.# Login-Sign-up
+* **Dependencies:** Zero external libraries required.
+
+---
+
+## 🔧 Recent Improvements
+
+* **Bug Fix** — Fixed file handle leak in `auth.cpp`: file is now opened *after* password validation passes.
+* **RNG Optimization** — `GameManager` initializes `mt19937` once in constructor; no static local in hot loop.
+* **Security** — Eliminated modulo bias in password generator (`utils.cpp`) by using per-set distributions.
+* **Clean Build** — Compiles with `-Wall -Wextra` with zero warnings.

@@ -13,12 +13,8 @@ bool AuthManager::usernameExists(const string& username) const {
 
     string savedUser, savedPass;
     while (file >> savedUser >> savedPass) {
-        if (username == savedUser) {
-            file.close();
-            return true;
-        }
+        if (username == savedUser) return true;
     }
-    file.close();
     return false;
 }
 
@@ -34,26 +30,12 @@ void AuthManager::registerUser() {
         return;
     }
 
-    ofstream file(USER_DATA_FILE, ios::app);
-    if (!file.is_open()) {
-        cerr << "Error opening file for writing.\n";
-        return;
-    }
-
-    bool validChoice = false;
-    while (!validChoice) {
+    while (true) {
         cout << "\n1. Enter your own password\n2. Generate strong password\nChoice: ";
-        if (!(cin >> choice)) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input! Please enter 1 or 2.\n";
-            continue;
-        }
-        if (choice == 1 || choice == 2) {
-            validChoice = true;
-        } else {
-            cout << "Invalid choice! Please enter 1 or 2.\n";
-        }
+        if (cin >> choice && (choice == 1 || choice == 2)) break;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input! Please enter 1 or 2.\n";
     }
 
     if (choice == 1) {
@@ -70,14 +52,13 @@ void AuthManager::registerUser() {
 
         if (strength == 1) {
             cout << "Password strength: WEAK — Please choose a stronger password.\n\n";
-            file.close();
             return;
         } else if (strength == 2) {
             cout << "Password strength: GOOD\n";
         } else {
             cout << "Password strength: EXCELLENT\n";
         }
-    } else if (choice == 2) {
+    } else {
         int len = 0;
         constexpr int kMinPasswordLength = 7;
         constexpr int kMaxPasswordLength = 128;
@@ -94,8 +75,12 @@ void AuthManager::registerUser() {
         cout << "Generated Password: " << password << "\n";
     }
 
+    ofstream file(USER_DATA_FILE, ios::app);
+    if (!file.is_open()) {
+        cerr << "Error opening file for writing.\n";
+        return;
+    }
     file << username << " " << password << "\n";
-    file.close();
     cout << "\nUser Registered Successfully!\n";
 }
 
@@ -115,12 +100,7 @@ bool AuthManager::loginUser(string& username) const {
 
     string savedUser, savedPass;
     while (file >> savedUser >> savedPass) {
-        if (username == savedUser && password == savedPass) {
-            file.close();
-            return true;
-        }
+        if (username == savedUser && password == savedPass) return true;
     }
-
-    file.close();
     return false;
 }

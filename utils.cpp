@@ -20,7 +20,7 @@ namespace Utils {
         }
 
         int score = hasLower + hasUpper + hasDigit + hasSpecial;
-
+        
         if (score <= 1) return 1;
         if (score == 2) return 2;
         if (score == 3) return 3;
@@ -38,15 +38,19 @@ namespace Utils {
         password.reserve(length);
 
         static mt19937 rng{random_device{}()};
-        uniform_int_distribution<size_t> dist(0, all.size() - 1);
+        uniform_int_distribution<size_t> distLower(0, lower.size() - 1);
+        uniform_int_distribution<size_t> distUpper(0, upper.size() - 1);
+        uniform_int_distribution<size_t> distDigit(0, digits.size() - 1);
+        uniform_int_distribution<size_t> distSymbol(0, symbols.size() - 1);
+        uniform_int_distribution<size_t> distAll(0, all.size() - 1);
 
-        password += lower[dist(rng) % lower.size()];
-        password += upper[dist(rng) % upper.size()];
-        password += digits[dist(rng) % digits.size()];
-        password += symbols[dist(rng) % symbols.size()];
+        password += lower[distLower(rng)];
+        password += upper[distUpper(rng)];
+        password += digits[distDigit(rng)];
+        password += symbols[distSymbol(rng)];
 
         for (int i = 4; i < length; ++i) {
-            password += all[dist(rng)];
+            password += all[distAll(rng)];
         }
 
         shuffle(password.begin(), password.end(), rng);
